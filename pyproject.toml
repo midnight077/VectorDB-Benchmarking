@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vdbbench"
+version = "0.1.0"
+description = "CPU-only, single-query benchmarking harness for vector databases"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "h5py",
+    "faiss-cpu",
+    "psutil",
+    "pydantic>=2",
+    "pyyaml",
+    "pandas",
+    "pyarrow",
+    "tqdm",
+    "requests",
+]
+
+[project.optional-dependencies]
+qdrant = ["qdrant-client"]
+pgvector = ["psycopg[binary]", "pgvector"]
+milvus = ["pymilvus"]
+viz = ["matplotlib"]
+
+[project.scripts]
+vdbbench-run = "vdbbench.harness.runner:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

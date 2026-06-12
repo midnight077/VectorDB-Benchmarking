@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/pip install *)",
+      "Bash(.venv/bin/python scripts/download_dataset.py)",
+      "Bash(.venv/bin/vdbbench-run --config config/default.yaml)",
+      "Bash(.venv/bin/python -c ' *)",
+      "Bash(cd /home/midnight/Documents/IIITD/Research/Rag_benchmarking/docs && \\\\ *)"
+    ]
+  }
+}

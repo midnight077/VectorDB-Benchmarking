@@ -1,0 +1,24 @@
+# Default benchmark configuration (Phase 0)
+
+lane: A
+
+dataset:
+  name: fashion-mnist-784-euclidean
+  path: data/fashion-mnist-784-euclidean.hdf5
+  metric: euclidean
+
+# k values to compute recall@k for. One results row is written per k.
+k_values: [10]
+
+n_warmup: 50
+n_repeats: 3
+
+backends:
+  - name: faiss_flat
+    index_type: flat
+    build_params: {}
+    search_params: {}
+
+results:
+  backend: sqlite
+  path: results/results.db
