@@ -1,4 +1,4 @@
-# Default benchmark configuration (Phase 0)
+# Default benchmark configuration
 
 lane: A
 
@@ -18,6 +18,11 @@ backends:
     index_type: flat
     build_params: {}
     search_params: {}
+
+  - name: faiss_hnsw
+    index_type: hnsw
+    build_params: {M: 16, ef_construction: 200}
+    search_params: {ef_search: 100}
 
 results:
   backend: sqlite

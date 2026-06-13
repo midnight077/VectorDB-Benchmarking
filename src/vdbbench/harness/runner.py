@@ -8,16 +8,18 @@ from datetime import datetime, timezone
 import numpy as np
 
 from vdbbench.backends.base import VectorDBAdapter
-from vdbbench.backends.faiss_backend import FaissFlatAdapter
+from vdbbench.backends.faiss_backend import FaissFlatAdapter, FaissHNSWAdapter
 from vdbbench.config import BackendConfig, Config, load_config
 from vdbbench.core.metrics import latency_percentiles, recall_at_k, serial_qps
 from vdbbench.core.types import RunResult
 from vdbbench.datasets.hdf5_ann import HDF5AnnDataset
 from vdbbench.groundtruth.precomputed import PrecomputedGroundTruth
+from vdbbench.harness.warmup import run_warmup
 from vdbbench.storage.store import SQLiteStore
 
 ADAPTERS: dict[str, type[VectorDBAdapter]] = {
     "faiss_flat": FaissFlatAdapter,
+    "faiss_hnsw": FaissHNSWAdapter,
 }
 
 
@@ -39,8 +41,7 @@ def run_backend(config: Config, backend_cfg: BackendConfig) -> list[RunResult]:
     n_queries = dataset.test_vectors.shape[0]
 
     # Warmup: discard timings.
-    for i in range(config.n_warmup):
-        adapter.search(dataset.test_vectors[i % n_queries], k_max)
+    run_warmup(adapter, dataset.test_vectors, k_max, config.n_warmup)
 
     # Measure: time only adapter.search().
     latencies_ms = np.empty(config.n_repeats * n_queries, dtype=np.float64)

@@ -61,3 +61,56 @@ class FaissFlatAdapter(VectorDBAdapter):
 
     def teardown(self) -> None:
         self.index = None
+
+
+class FaissHNSWAdapter(VectorDBAdapter):
+    """Approximate ANN index (faiss.IndexHNSWFlat).
+
+    Build params: M (graph degree), ef_construction.
+    Search param: ef_search, set via set_search_params without rebuilding.
+    """
+
+    name = "faiss_hnsw"
+
+    def __init__(self):
+        self.index: faiss.IndexHNSWFlat | None = None
+        self.dim: int | None = None
+        self.metric: Metric | None = None
+        self._rss_before: int = 0
+
+    def setup(self, dim: int, metric: Metric, build_params: dict) -> None:
+        self.dim = dim
+        self.metric = metric
+        self._rss_before = psutil.Process(os.getpid()).memory_info().rss
+        m = build_params.get("M", 16)
+        ef_construction = build_params.get("ef_construction", 40)
+        self.index = faiss.IndexHNSWFlat(dim, m, _METRIC_MAP[metric])
+        self.index.hnsw.efConstruction = ef_construction
+
+    def build_index(self, vectors: np.ndarray, ids: np.ndarray) -> BuildResult:
+        # IndexHNSWFlat has no add_with_ids; positional ids 0..n-1 match
+        # the ann-benchmarks ground-truth id space.
+        vectors = np.ascontiguousarray(vectors, dtype=np.float32)
+        start = time.perf_counter()
+        self.index.add(vectors)
+        build_time_s = time.perf_counter() - start
+        return BuildResult(build_time_s=build_time_s)
+
+    def set_search_params(self, search_params: dict) -> None:
+        if "ef_search" in search_params:
+            self.index.hnsw.efSearch = search_params["ef_search"]
+
+    def search(self, query: np.ndarray, k: int) -> list[int]:
+        query = np.ascontiguousarray(query.reshape(1, -1), dtype=np.float32)
+        _, ids = self.index.search(query, k)
+        return ids[0].tolist()
+
+    def index_size_bytes(self) -> int:
+        return faiss.serialize_index(self.index).nbytes
+
+    def memory_rss_bytes(self) -> int:
+        rss_now = psutil.Process(os.getpid()).memory_info().rss
+        return max(rss_now - self._rss_before, 0)
+
+    def teardown(self) -> None:
+        self.index = None

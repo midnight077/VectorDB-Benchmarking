@@ -5,7 +5,9 @@
       "Bash(.venv/bin/python scripts/download_dataset.py)",
       "Bash(.venv/bin/vdbbench-run --config config/default.yaml)",
       "Bash(.venv/bin/python -c ' *)",
-      "Bash(cd /home/midnight/Documents/IIITD/Research/Rag_benchmarking/docs && \\\\ *)"
+      "Bash(cd /home/midnight/Documents/IIITD/Research/Rag_benchmarking/docs && \\\\ *)",
+      "Bash(sqlite3 results/results.db \".schema\")",
+      "Bash(sqlite3 results/results.db \"SELECT run_id, backend, index_type, k, recall_at_k, p50_ms, p95_ms, p99_ms, mean_ms, serial_qps FROM results;\")"
     ]
   }
 }
