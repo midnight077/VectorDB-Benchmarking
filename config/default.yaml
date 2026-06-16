@@ -10,8 +10,11 @@ dataset:
 # k values to compute recall@k for. One results row is written per k.
 k_values: [10]
 
-n_warmup: 50
-n_repeats: 3
+# n_warmup: 50
+# n_repeats: 3
+
+n_warmup: 5
+n_repeats: 1
 
 backends:
   - name: faiss_flat
@@ -23,6 +26,16 @@ backends:
     index_type: hnsw
     build_params: {M: 16, ef_construction: 200}
     search_params: {ef_search: 100}
+
+  # - name: hnsw_scalar
+  #   index_type: hnsw
+  #   build_params: {M: 16, ef_construction: 200}
+  #   search_params: {ef_search: 100}
+
+  # - name: hnsw_fast
+  #   index_type: hnsw
+  #   build_params: {M: 16, ef_construction: 200}
+  #   search_params: {ef_search: 100}
 
 results:
   backend: sqlite

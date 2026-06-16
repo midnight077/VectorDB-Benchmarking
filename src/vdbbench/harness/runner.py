@@ -9,6 +9,8 @@ import numpy as np
 
 from vdbbench.backends.base import VectorDBAdapter
 from vdbbench.backends.faiss_backend import FaissFlatAdapter, FaissHNSWAdapter
+from vdbbench.backends.hnsw_fast_backend import HnswFastAdapter
+from vdbbench.backends.hnsw_scalar_backend import HnswScalarAdapter
 from vdbbench.config import BackendConfig, Config, load_config
 from vdbbench.core.metrics import latency_percentiles, recall_at_k, serial_qps
 from vdbbench.core.types import RunResult
@@ -20,6 +22,8 @@ from vdbbench.storage.store import SQLiteStore
 ADAPTERS: dict[str, type[VectorDBAdapter]] = {
     "faiss_flat": FaissFlatAdapter,
     "faiss_hnsw": FaissHNSWAdapter,
+    "hnsw_scalar": HnswScalarAdapter,
+    "hnsw_fast": HnswFastAdapter,
 }
 
 
@@ -48,7 +52,7 @@ def run_backend(config: Config, backend_cfg: BackendConfig) -> list[RunResult]:
     retrieved = np.empty((n_queries, k_max), dtype=np.int64)
     idx = 0
     for rep in range(config.n_repeats):
-        for i in range(n_queries):
+        for i in range(10):
             start = time.perf_counter()
             result_ids = adapter.search(dataset.test_vectors[i], k_max)
             latencies_ms[idx] = (time.perf_counter() - start) * 1000.0

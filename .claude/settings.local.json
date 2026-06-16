@@ -7,7 +7,32 @@
       "Bash(.venv/bin/python -c ' *)",
       "Bash(cd /home/midnight/Documents/IIITD/Research/Rag_benchmarking/docs && \\\\ *)",
       "Bash(sqlite3 results/results.db \".schema\")",
-      "Bash(sqlite3 results/results.db \"SELECT run_id, backend, index_type, k, recall_at_k, p50_ms, p95_ms, p99_ms, mean_ms, serial_qps FROM results;\")"
+      "Bash(sqlite3 results/results.db \"SELECT run_id, backend, index_type, k, recall_at_k, p50_ms, p95_ms, p99_ms, mean_ms, serial_qps FROM results;\")",
+      "Bash(apt list *)",
+      "Read(//proc/**)",
+      "Bash(mkdir -p native/hnsw/include/hnsw native/hnsw/src native/hnsw/tests)",
+      "Bash(g++ -O3 -std=c++17 -Wall -Wextra -I native/hnsw/include native/hnsw/tests/test_hnsw.cpp -o /tmp/test_hnsw)",
+      "Bash(/tmp/test_hnsw)",
+      "Bash(native/hnsw/build-test/test_hnsw)",
+      "Bash(sqlite3 results/results.db \"SELECT run_id, backend, index_type, k, recall_at_k, p50_ms, p95_ms, p99_ms, mean_ms, serial_qps, build_time_s, peak_rss_mb, index_disk_mb FROM results WHERE backend IN \\('faiss_hnsw','hnsw_scalar'\\) ORDER BY timestamp DESC LIMIT 2;\")",
+      "Bash(python3 -c \"import pybind11; print\\(pybind11.get_cmake_dir\\(\\)\\)\")",
+      "Bash(cmake --version)",
+      "Bash(g++ --version)",
+      "Bash(curl -sI --max-time 5 https://github.com)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(cd /home/midnight/Documents/IIITD/Research/Rag_benchmarking/native/hnsw/third_party/vcl && rm -rf .git .github *.cpp changelog.txt && ls -la && head -3 LICENSE)",
+      "Bash(cmake --build native/hnsw/build-test --target test_distances -j16)",
+      "Bash(./native/hnsw/build-test/test_distances)",
+      "Bash(timeout 30 gdb -p 106268 -batch -ex \"thread apply all bt\" -ex \"detach\")",
+      "Read(//home/midnight/Documents/IIITD/Research/faiss/**)",
+      "Bash(grep -i \"numpy\" build/CMakeCache.txt)",
+      "Bash(grep -i \"PYTHON_EXECUTABLE\\\\|Python_EXECUTABLE\\\\|Python3_EXECUTABLE\" build/CMakeCache.txt)",
+      "Bash(cat /usr/lib/python3/dist-packages/numpy/version.py 2>/dev/null; echo \"---\"; grep -rn \"arrayobject.h\\\\|import_array\\\\|numpy/ndarray\" /home/midnight/Documents/IIITD/Research/faiss/faiss/python/*.cpp /home/midnight/Documents/IIITD/Research/faiss/faiss/python/*.swig 2>/dev/null; echo \"---grep build wrap---\"; grep -rln \"arrayobject.h\\\\|import_array\" /home/midnight/Documents/IIITD/Research/faiss/build/faiss/python/*.cxx 2>/dev/null)",
+      "Read(//usr/lib/python3/dist-packages/numpy/**)"
+    ],
+    "additionalDirectories": [
+      "/home/midnight/Documents/IIITD/Research/Rag_benchmarking/native/hnsw/include",
+      "/home/midnight/Documents/IIITD/Research/Rag_benchmarking/native/hnsw/third_party/vcl/.git"
     ]
   }
 }

@@ -4,6 +4,9 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+native/hnsw/build*/
+*.so
+swigfaiss.py
 
 data/
 results/
