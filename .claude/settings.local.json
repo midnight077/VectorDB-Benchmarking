@@ -28,7 +28,8 @@
       "Bash(grep -i \"numpy\" build/CMakeCache.txt)",
       "Bash(grep -i \"PYTHON_EXECUTABLE\\\\|Python_EXECUTABLE\\\\|Python3_EXECUTABLE\" build/CMakeCache.txt)",
       "Bash(cat /usr/lib/python3/dist-packages/numpy/version.py 2>/dev/null; echo \"---\"; grep -rn \"arrayobject.h\\\\|import_array\\\\|numpy/ndarray\" /home/midnight/Documents/IIITD/Research/faiss/faiss/python/*.cpp /home/midnight/Documents/IIITD/Research/faiss/faiss/python/*.swig 2>/dev/null; echo \"---grep build wrap---\"; grep -rln \"arrayobject.h\\\\|import_array\" /home/midnight/Documents/IIITD/Research/faiss/build/faiss/python/*.cxx 2>/dev/null)",
-      "Read(//usr/lib/python3/dist-packages/numpy/**)"
+      "Read(//usr/lib/python3/dist-packages/numpy/**)",
+      "Bash(python3 -c ' *)"
     ],
     "additionalDirectories": [
       "/home/midnight/Documents/IIITD/Research/Rag_benchmarking/native/hnsw/include",

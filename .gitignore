@@ -1,6 +1,6 @@
 __pycache__/
 *.py[cod]
-.venv/
+# .venv/
 *.egg-info/
 build/
 dist/
@@ -9,6 +9,6 @@ native/hnsw/build*/
 swigfaiss.py
 
 data/
-results/
+# results/
 
 .DS_Store

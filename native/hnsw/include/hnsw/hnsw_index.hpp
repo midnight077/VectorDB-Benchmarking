@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include<iostream>
 
 #include "hnsw/visited_pool.hpp"
 
@@ -63,6 +64,7 @@ public:
         for (int i = 0; i < k; ++i) out_ids[i] = -1;
         if (size() == 0) return;
 
+        // std::cout<<std::endl<<"---------"<<std::endl;
         uint32_t cur_ep = entry_point_;
         float cur_dist = Dist::dist(query, get_data(cur_ep), dim_);
         for (int level = max_level_; level > 0; --level) {
@@ -219,7 +221,7 @@ private:
     // Min-heap by distance: top() = nearest.
     using MinHeap = std::priority_queue<Candidate, std::vector<Candidate>, std::greater<Candidate>>;
 
-    const float* get_data(uint32_t id) const {
+    const float* get_data(uint32_t id) const {  // gets the pointer to data from _data array
         return data_.data() + static_cast<size_t>(id) * static_cast<size_t>(dim_);
     }
 
@@ -232,7 +234,7 @@ private:
     // Beam search at a single layer. Returns up to `ef` nearest-to-`point` ids
     // visited from `entry`, as a max-heap (top = furthest of the kept set).
     MaxHeap search_layer(const float* point, uint32_t entry, int ef, int level,
-                          VisitedPool::VisitedList& visited) const {
+                          VisitedPool::VisitedList& visited) const {    // point -> query/new point
         MaxHeap top_candidates;
         MinHeap candidate_set;
 

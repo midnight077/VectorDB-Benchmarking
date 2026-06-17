@@ -3,18 +3,21 @@
 lane: A
 
 dataset:
-  name: fashion-mnist-784-euclidean
-  path: data/fashion-mnist-784-euclidean.hdf5
+  # name: fashion-mnist-784-euclidean
+  # path: data/fashion-mnist-784-euclidean.hdf5
+  # metric: euclidean
+  name: sift-128-euclidean
+  path: data/sift-128-euclidean.hdf5
   metric: euclidean
 
 # k values to compute recall@k for. One results row is written per k.
-k_values: [10]
+k_values: [100]
 
 # n_warmup: 50
 # n_repeats: 3
 
-n_warmup: 5
-n_repeats: 1
+n_warmup: 10
+n_repeats: 3
 
 backends:
   - name: faiss_flat
@@ -25,17 +28,17 @@ backends:
   - name: faiss_hnsw
     index_type: hnsw
     build_params: {M: 16, ef_construction: 200}
-    search_params: {ef_search: 100}
+    search_params: {ef_search: 200}
 
-  # - name: hnsw_scalar
-  #   index_type: hnsw
-  #   build_params: {M: 16, ef_construction: 200}
-  #   search_params: {ef_search: 100}
+  - name: hnsw_scalar
+    index_type: hnsw
+    build_params: {M: 16, ef_construction: 200}
+    search_params: {ef_search: 200}
 
-  # - name: hnsw_fast
-  #   index_type: hnsw
-  #   build_params: {M: 16, ef_construction: 200}
-  #   search_params: {ef_search: 100}
+  - name: hnsw_fast
+    index_type: hnsw
+    build_params: {M: 16, ef_construction: 200}
+    search_params: {ef_search: 200}
 
 results:
   backend: sqlite

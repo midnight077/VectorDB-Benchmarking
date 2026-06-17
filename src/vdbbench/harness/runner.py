@@ -42,7 +42,8 @@ def run_backend(config: Config, backend_cfg: BackendConfig) -> list[RunResult]:
     adapter.set_search_params(backend_cfg.search_params)
 
     k_max = max(config.k_values)
-    n_queries = dataset.test_vectors.shape[0]
+    # n_queries = dataset.test_vectors.shape[0]
+    n_queries = 100
 
     # Warmup: discard timings.
     run_warmup(adapter, dataset.test_vectors, k_max, config.n_warmup)
@@ -52,7 +53,7 @@ def run_backend(config: Config, backend_cfg: BackendConfig) -> list[RunResult]:
     retrieved = np.empty((n_queries, k_max), dtype=np.int64)
     idx = 0
     for rep in range(config.n_repeats):
-        for i in range(10):
+        for i in range(n_queries):
             start = time.perf_counter()
             result_ids = adapter.search(dataset.test_vectors[i], k_max)
             latencies_ms[idx] = (time.perf_counter() - start) * 1000.0

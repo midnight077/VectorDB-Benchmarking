@@ -2813,7 +2813,9 @@ shared, unmodified, templated code.
   the templated core) → `distances_simd.hpp` (Section 6) →
   `bindings.cpp` (Section 9) → the two `tests/*.cpp` files (Sections 10–11).
 
+####
 
+pip install -e . --no-build-isolation
 
 
 

@@ -12,19 +12,21 @@ using SimdF = Vec16f;
 using SimdF = Vec8f;
 #endif
 
+// Note : floating-point addition isn't perfectly associative
+
 // Squared L2 distance via VCL SIMD. Smaller = closer. Same convention as
 // ScalarL2 (distances_scalar.hpp); reduction order differs so results match
 // only to within float rounding.
 struct SimdL2 {
     static float dist(const float* a, const float* b, int d) {
         constexpr int W = SimdF::size();
-        SimdF acc(0.0f);
+        SimdF acc(0.0f);    // accumulator, similar to C in A+B=C
         int i = 0;
         for (; i + W <= d; i += W) {
             SimdF va = SimdF().load(a + i);
             SimdF vb = SimdF().load(b + i);
             SimdF diff = va - vb;
-            acc = mul_add(diff, diff, acc);
+            acc = mul_add(diff, diff, acc); // computes acc = diff * diff + acc
         }
         float sum = horizontal_add(acc);
 
