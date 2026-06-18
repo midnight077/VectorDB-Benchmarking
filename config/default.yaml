@@ -30,15 +30,15 @@ backends:
     build_params: {M: 16, ef_construction: 200}
     search_params: {ef_search: 200}
 
-  - name: hnsw_scalar
-    index_type: hnsw
-    build_params: {M: 16, ef_construction: 200}
-    search_params: {ef_search: 200}
+  # - name: hnsw_scalar
+  #   index_type: hnsw
+  #   build_params: {M: 16, ef_construction: 200}
+  #   search_params: {ef_search: 200}
 
-  - name: hnsw_fast
-    index_type: hnsw
-    build_params: {M: 16, ef_construction: 200}
-    search_params: {ef_search: 200}
+  # - name: hnsw_fast
+  #   index_type: hnsw
+  #   build_params: {M: 16, ef_construction: 200}
+  #   search_params: {ef_search: 200}
 
 results:
   backend: sqlite
