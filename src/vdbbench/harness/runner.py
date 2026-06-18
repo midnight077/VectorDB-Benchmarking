@@ -1,5 +1,15 @@
 from __future__ import annotations
 
+import os
+
+# Keep each BLAS call single-threaded so it doesn't nest inside FAISS's OpenMP
+# regions: on many-core machines that nesting (16 OpenMP threads x 16 BLAS
+# threads) overruns OpenBLAS's buffer pool -> "BLAS: ...too many memory regions"
+# + segfault. FAISS's own OpenMP parallelism (OMP_NUM_THREADS) is left untouched,
+# so index builds/search still use all cores. Must run before numpy/faiss load
+# the BLAS .so, which reads this env var at load time.
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+
 import argparse
 import time
 import uuid
