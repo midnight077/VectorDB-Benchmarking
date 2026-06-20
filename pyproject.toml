@@ -20,6 +20,7 @@ dependencies = [
     "requests",
     "ninja",
     "pybind11>=2.12",
+    "cmake>=3.21",
 ]
 
 [project.optional-dependencies]
