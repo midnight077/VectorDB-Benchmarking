@@ -31,7 +31,11 @@
       "Read(//usr/lib/python3/dist-packages/numpy/**)",
       "Bash(python3 -c ' *)",
       "Bash(ldd ./libfaiss.so)",
-      "Bash(ldd ./_swigfaiss.abi3.so)"
+      "Bash(ldd ./_swigfaiss.abi3.so)",
+      "Bash(uv pip *)",
+      "Bash(uv sync *)",
+      "Bash(uv lock *)",
+      "Bash(uv --version)"
     ],
     "additionalDirectories": [
       "/home/midnight/Documents/IIITD/Research/Rag_benchmarking/native/hnsw/include",

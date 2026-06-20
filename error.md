@@ -122,6 +122,82 @@ Likely yes for this project specifically, given the native-extension build (scik
 - uv still won't install system-level tools (a C++ compiler, system `cmake`) — those remain
   the OS package manager's responsibility either way.
 
+## Error: `cmake: not found` pointing at a deleted `uv` build-isolation temp dir
+
+### Symptom
+
+After cloning on a different machine and running `uv sync` / `vdbbench-run`:
+
+```
+/bin/sh: 1: /home/nishit/.cache/uv/builds-v0/.tmpM5qAqt/lib/python3.11/site-packages/cmake/data/bin/cmake: not found
+FAILED: [code=127] build.ninja .../cmake_install.cmake
+ninja: error: rebuilding 'build.ninja': subcommand failed
+```
+
+Adding `cmake` to `[project] dependencies` (so it lands in the persistent `.venv`) did **not**
+fix this — the same error recurred with a *different* `.tmp*` path each time.
+
+### Root cause
+
+`uv sync` builds the project's wheel inside a **separate, ephemeral build-isolation venv**
+per PEP 517/518. That isolation venv is populated only from `[build-system] requires`
+(`scikit-build-core`, `pybind11`) — it does **not** include `[project] dependencies`
+(`cmake`, `ninja`, etc.), because those are runtime deps of the *installed* package, not
+build-time deps of the *build backend*.
+
+Since no `cmake` exists in that isolated env (and none on the system `PATH` either),
+scikit-build-core auto-fetches a `cmake` PyPI wheel into the temp build-isolation directory
+just to run the configure step. CMake then **bakes the absolute path to that binary** into
+`CMakeCache.txt` (`CMAKE_COMMAND`). Once `uv` finishes the build and deletes the temp
+isolation venv, that path no longer exists — but `[tool.scikit-build.editable] rebuild =
+true` means every subsequent `import _vdbhnsw` re-invokes `cmake --build .` against the
+*same stale cache*, so it fails forever, with a new random temp path each time `uv sync`
+reruns the build.
+
+Adding `cmake` to `[project] dependencies` didn't help because the *build* step never
+consults the project's dependency list — only the isolated build env, which is intentionally
+ephemeral by PEP 517 design.
+
+### Fix
+
+Disable build isolation for this package specifically, so the build runs directly inside the
+persistent `.venv` (which already has `cmake`/`ninja`/`pybind11` installed as regular
+dependencies), and add `scikit-build-core` itself to `[project] dependencies` too (since
+with isolation off, the build backend must also be importable from `.venv`):
+
+```toml
+[project]
+dependencies = [
+    ...
+    "ninja",
+    "pybind11>=2.12",
+    "cmake>=3.21",
+    "scikit-build-core>=0.10",
+]
+
+[tool.uv]
+no-build-isolation-package = ["vdbbench"]
+```
+
+After `rm -rf build/ .venv && uv lock && uv sync`, `CMakeCache.txt`'s `CMAKE_COMMAND` now
+resolves to `<repo>/.venv/lib/python3.11/site-packages/cmake/data/bin/cmake` — a path that
+persists for the lifetime of `.venv`, instead of a deleted `uv` build-isolation temp dir.
+Verified working: `ninja: no work to do` on a no-op rebuild, and a full benchmark run
+completed successfully (`faiss_flat`/`faiss_hnsw`, all `k` values).
+
+Note: `[tool.uv.extra-build-dependencies]` (which uv's own error hint suggests) does not
+appear to be functional in `uv 0.11.21` — putting `scikit-build-core` there had no effect;
+putting it directly in `[project] dependencies` alongside `no-build-isolation-package` is
+what actually worked.
+
+### Is this permanent?
+
+Yes, on a machine with a C++ toolchain and `cmake`-buildable environment available
+(`scikit-build-core`/`cmake`/`ninja`/`pybind11` are now ordinary pinned-by-lock project
+dependencies, not implicitly fetched build-isolation artifacts). A fresh clone + `uv sync`
+reproduces a working build without manual intervention. System-level prerequisites (C/C++
+compiler) are still outside uv's/pip's control either way.
+
 
 Yes, you can pin exact versions in pyproject.toml — [project] dependencies accepts full PEP 440 specifiers, so "numpy==2.4.6" works exactly like in requirements.txt. The reason this project (and most Python packages) avoids pinning there: if your package is ever installed as a dependency of something else, exact pins in dependencies can conflict with whatever versions that other project needs, causing resolver failures. The convention is to keep pyproject.toml ranges loose (compatibility) and use a separate lockfile — requirements.txt/pip-compile output, or uv.lock — for exact reproducible pins in CI/deployment.
 

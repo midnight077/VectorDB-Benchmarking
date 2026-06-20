@@ -21,6 +21,7 @@ dependencies = [
     "ninja",
     "pybind11>=2.12",
     "cmake>=3.21",
+    "scikit-build-core>=0.10",
 ]
 
 [project.optional-dependencies]
@@ -39,3 +40,6 @@ wheel.packages = ["src/vdbbench"]
 
 [tool.scikit-build.editable]
 rebuild = true
+
+[tool.uv]
+no-build-isolation-package = ["vdbbench"]
