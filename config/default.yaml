@@ -11,7 +11,7 @@ dataset:
   metric: euclidean
 
 # k values to compute recall@k for. One results row is written per k.
-k_values: [100]
+k_values: [5,10,20,50,100]
 
 # n_warmup: 50
 # n_repeats: 3

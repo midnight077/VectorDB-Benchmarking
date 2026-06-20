@@ -18,6 +18,8 @@ dependencies = [
     "pyarrow",
     "tqdm",
     "requests",
+    "ninja",
+    "pybind11>=2.12",
 ]
 
 [project.optional-dependencies]

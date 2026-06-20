@@ -158,3 +158,7 @@ Register the `hnsw_fast` backend; run **both** through the existing sweep and re
 *Acceptance:* one Pareto plot showing `hnsw_scalar`, `hnsw_fast`, and FAISS HNSW overlaid; a comparison table of build_time / p50/p95/p99 / recall@10 / index_size for scalar vs fast at matched configs. Recall and index size match between the two; fast wins on build time and latency.
 
 ---
+
+
+rm -rf build/
+pip install -e . --no-build-isolation
